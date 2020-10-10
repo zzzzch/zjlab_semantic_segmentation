@@ -1,6 +1,15 @@
 #include <iostream>
-#include "pcl/io/pcd_io.h"
-int main() {
-    std::cout << "Just for test!!" << std::endl;
-    return 0;
+#include <glog/logging.h>
+
+
+int main (int argc, char **argv)
+{
+
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    google::InitGoogleLogging(argv[0]);
+    FLAGS_colorlogtostderr = true;
+    FLAGS_stderrthreshold = 0;
+
+
+    return (0);
 }

@@ -1,18 +1,31 @@
+project(base)
 
+file(GLOB_RECURSE ${PROJECT_NAME}_CPP_FILES src/*.cpp src/*.c include/*.h)
 
-ADD_LIBRARY(base_lib ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(${PROJECT_NAME} ${${PROJECT_NAME}_CPP_FILES})
 
-#target_include_directories(base_lib
-#        PUBLIC
-#        ${PCL_INCLUDE_DIRS}
-#        ${CMAKE_CURRENT_SOURCE_DIR}
-#        )
-#
-#target_link_libraries(base_lib
-#        PUBLIC
-#        ${PCL_LIBRARIES}
-#        )
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${PCL_INCLUDE_DIRS}
+        ${EIGEN_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIRS}
+        ${OPENCV_INCLUDE_DIRS}
+        ${OPENGL_INCLUDE_DIR}
+        ${OpenMesh_INCLUDE_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${GLOG_INCLUDE_DIR}
+        ${GFLAGS_INCLUDE_DIR}
+        )
 
-
-
+target_link_libraries(${PROJECT_NAME}
+        PUBLIC
+        ${PCL_LIBRARIES}
+        ${Eigen_LIBRARIES}
+        ${OpenCV_LIBS}
+        ${OPENGL_LIBRARIES}
+        ${OpenMesh_LIBS}
+        ${GLOG_LIBRARY}
+        ${gflags_LIBRARIES}
+        )
 

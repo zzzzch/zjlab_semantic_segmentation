@@ -1,0 +1,11 @@
+---
+BasedOnStyle: Google
+---
+Language:                               Cpp
+Cpp11BracedListStyle:                   true
+Standard:                               Cpp11
+ColumnLimit: 80
+CommentPragmas: '^ NOLINT'
+---
+Language: JavaScript
+ColumnLimit: 80 
