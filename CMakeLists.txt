@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(PCL 1.9 REQUIRED)
 find_package(Boost REQUIRED QUIET)
 find_package(OpenCV REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(realsense2 2.39 REQUIRED)
 
 ## glog
 find_package(Glog REQUIRED)
@@ -38,10 +40,11 @@ if(NOT (GLUT_INCLUDE_DIR OR GLUT_LIBRARIES))
     message("glut lab is " ${GLUT_LIBRARIES})
 endif(NOT (GLUT_INCLUDE_DIR OR GLUT_LIBRARIES))
 
-#/usr/lib/x86_64-linux-gnu/libglut.so
+# nolman json
+find_package(nlohmann_json REQUIRED)
 
 ## openmesh
-find_package(OpenMesh REQUIRED)
+#find_package(OpenMesh REQUIRED)
 #if(NOT (OpenMesh_INCLUDE_DIRS AND OpenMesh_LIBS))
 #    message("openmash path is wrong , can't find it" )
 #    message("mesh include is " ${OpenMesh_INCLUDE_DIRS})
@@ -55,16 +58,10 @@ include_directories(${PCL_INCLUDE_DIRS}
         ${EIGEN_INCLUDE_DIRS}
         )
 
-#add_executable(untitled1 main.cpp)
-#
-#target_link_libraries (untitled1
-#        ${GLOG_LIBRARY}
-#        ${gflags_LIBRARIES}
-#        ${Eigen_LIBRARIES}
-#        ${PCL_LIBRARIES})
-
 add_subdirectory(base)
+add_subdirectory(imgui)
 add_subdirectory(FindCloud)
 add_subdirectory(localization)
+add_subdirectory(realsense_grap)
 #add_subdirectory(camera)
 

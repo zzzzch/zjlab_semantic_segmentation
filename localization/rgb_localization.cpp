@@ -32,9 +32,9 @@
 #include <pcl/registration/ia_ransac.h>
 #include <pcl/registration/sample_consensus_prerejective.h>
 
-//openMesh
-#include <OpenMesh/Core/IO/MeshIO.hh>
-#include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+////openMesh
+//#include <OpenMesh/Core/IO/MeshIO.hh>
+//#include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
 #include "pcl_tools.h"
 #include "base_io.h"
@@ -43,23 +43,74 @@ using namespace pose;
 using namespace std;
 
 DEFINE_string(scene_path,
-              "/home/zhachanghai/test_grap/pcl_test/", "scene pcd file");
+              "/home/zhachanghai/cat/pcl_cloud/", "scene pcd file");
 
 DEFINE_string(target_path,
-              "/home/zhachanghai/guochen_test/model.ply", "target ply file");
+              "/home/zhachanghai/cat/cat_new.ply", "target ply file");
 
-template <typename PointT>
-typename pcl::PointCloud<PointT>::Ptr transPointCloud(typename pcl::PointCloud<PointT>::Ptr& input_cloud,Eigen::Matrix4f& rotation){
-    typename pcl::PointCloud<PointT>::Ptr result(new pcl::PointCloud<PointT>());
-    for(int i = 0; i < input_cloud->size(); i++){
-        Eigen::Vector4f origin;
-        Eigen::Vector4f process;
-        origin << input_cloud->points[i].x,input_cloud->points[i].y,input_cloud->points[i].z,1;
-        process =  rotation * origin;
-        result->push_back(PointT(process(0),process(1),process(2)));
-    }
-    return result;
+pcl::PointCloud<pcl::PointXYZ>::Ptr removePlane(pcl::PointCloud<pcl::PointXYZ>::Ptr origin){
+
 }
+
+
+//void GroundRemoval(pcl::PointCloud<pcl::PointXYZ>::Ptr in) {
+//
+//    pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>);
+//    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
+//    pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
+//    pcl::PointCloud<pcl::PointXYZ>::Ptr outgr_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+////pcl::PointCloud<pcl::PointXYZ>::Ptr ingr_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+//
+//    ne.setInputCloud(in);
+//    ne.setSearchMethod(tree);
+//    ne.setKSearch(15);
+//    ne.setViewPoint(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),
+//                    std::numeric_limits<double>::max());
+//    ne.compute(*cloud_normals);
+//
+//    pcl::RegionGrowing<pcl::PointXYZ, pcl::Normal> reg;
+//    reg.setMinClusterSize(100);
+//    reg.setMaxClusterSize(10000);
+//    reg.setSearchMethod(tree);
+//    reg.setNumberOfNeighbours(30);  //ini =30
+//    reg.setInputCloud(in);
+////reg.setIndices (indices);
+//    reg.setInputNormals(cloud_normals);
+//    reg.setSmoothnessThreshold(4.0 / 180.0 * M_PI);  //ini =3.
+//    reg.setCurvatureThreshold(1.0);
+//
+//    std::vector<pcl::PointIndices> clusters;
+//    reg.extract(clusters);
+//
+//// cout << "Number of clusters is equal to " << clusters.size () << endl;
+//// cout << "First cluster has " << clusters[0].indices.size () << " points." << endl;
+//
+//    for (int i = 0; i < clusters.size(); i++) {
+//        double distance = 0;
+//        double distance_min = 100;
+//        pcl::PointCloud<pcl::PointXYZ>::Ptr ingr_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+//
+//        for (int m = 0; m < clusters[i].indices.size(); m++) {
+//            ingr_cloud->push_back(in->points[clusters[i].indices[m]]);
+//        }
+//
+//        int ingr_num = ingr_cloud->points.size();
+//        //cout<<"ingr_num=="<<ingr_num<<endl;
+//
+//        for (int j = 0; j < ingr_num; j++) {
+//            distance += fabs(ingr_cloud->points[j].z);//todo y
+//            if (fabs(ingr_cloud->points[j].z) < distance_min) {
+//                distance_min = fabs(ingr_cloud->points[j].z);
+//            }
+//        }
+//        double distance_ave = distance / double(ingr_num);
+//        planeout[i].distance = distance_min;
+//        *planeout[i].PlaneCloud = *ingr_cloud;
+//        // cout<<"distance_min=="<<distance_min<<endl;
+//        // cout<<"distance_ave=="<<distance_ave<<endl;
+//    }
+//}
+
 
 void addLine(string& in_file, int count, Eigen::Matrix4f &rotation){
 
@@ -158,11 +209,13 @@ int main(int argc, char **argv) {
 //    intrinsics_depth.cy = 255.234;
 //    getVideoFrame2Cloud(guochen_movie_file, intrinsics_depth, output_path);
 
-    ofstream output("/home/zhachanghai/test_grap/rotation.txt");
+//    ofstream output("/home/zhachanghai/test_grap/rotation.txt");
 
-    for(int count = 240;count < 241; count++){
+    for(int count = 0;count < 1; count++){
 
         string scene_file_path = FLAGS_scene_path + to_string(count) + "_point.pcd";
+
+//        string scene_file_path = "/home/zhachanghai/cat/read_test.pcd";
 
         string target_file_path = FLAGS_target_path;
 
@@ -177,7 +230,7 @@ int main(int argc, char **argv) {
         for(int i = 0; i < scene->size(); i++){
             float distance = pow(scene->points[i].x,2)+pow(scene->points[i].y,2)+pow(scene->points[i].z,2);
 //        LOG_EVERY_N(INFO,100) << "distance is " << distance ;
-            if(distance < 3){
+            if(distance < 0.4 && distance > 0.2){
                 distance_scene->push_back(scene->points[i]);
             }
         }
@@ -202,9 +255,9 @@ int main(int argc, char **argv) {
         LOG(INFO) << "origin set position is " << x << " " << y << " " << z ;
         for (int i = 0; i < point_num; i++) {
             pcl::PointXYZ pt;
-            pt.x = positions[i][0]-x;
-            pt.y = positions[i][1]-y;
-            pt.z = positions[i][2]-z;
+            pt.x = (positions[i][0]-x)/1000;
+            pt.y = (positions[i][1]-y)/1000;
+            pt.z = (positions[i][2]-z)/1000;
             model->push_back(pt);
         }
 
@@ -221,8 +274,8 @@ int main(int argc, char **argv) {
         LOG(INFO) << "After downsample, scene point number is " << scene->size();
         LOG(INFO) << "After downsample, target point number is " << model->size();
 
-//        pcl::io::savePCDFileASCII("/home/zhachanghai/test_grap/down_scene.pcd", *scene);
-//        pcl::io::savePCDFileASCII("/home/zhachanghai/test_grap/down_target.pcd", *model);
+//        pcl::io::savePCDFileASCII("/home/zhachanghai/cat/down_scene.pcd", *scene);
+//        pcl::io::savePCDFileASCII("/home/zhachanghai/cat/down_target.pcd", *model);
 
         pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
         tree->setInputCloud (scene);
@@ -239,16 +292,16 @@ int main(int argc, char **argv) {
 
         pcl::PointCloud<pcl::PointXYZ>::Ptr process_scene(new pcl::PointCloud<pcl::PointXYZ>);
 
-        if(count > 80){
-            process_scene = getChildCloudByIndicesFromOriginal<pcl::PointXYZ>(scene,cluster_indices[2]);
-        }else{
-            process_scene = getChildCloudByIndicesFromOriginal<pcl::PointXYZ>(scene,cluster_indices[1]);
-        }
-
+        process_scene = getChildCloudByIndicesFromOriginal<pcl::PointXYZ>(scene,cluster_indices[0]);
 
         LOG(INFO) << "After euclidean cluster, process scene point number is " << process_scene->size();
 
-//        pcl::io::savePCDFileASCII("/home/zhachanghai/test_grap/process_scene.pcd", *process_scene);
+//        pcl::io::savePCDFileASCII("/home/zhachanghai/cat/process_scene.pcd", *process_scene);
+
+
+        pcl::io::loadPCDFile("/home/zhachanghai/bottle/bottle.pcd",*model);
+        pcl::io::loadPCDFile("/home/zhachanghai/bottle/bottle1.pcd",*process_scene);
+
 
 
         pcl::VoxelGrid<pcl::PointXYZ> voxel_grid;
@@ -328,7 +381,7 @@ int main(int argc, char **argv) {
         Eigen::Matrix4f sac_trans;
         sac_trans = scia.getFinalTransformation();
         LOG(INFO) << sac_trans;
-//        pcl::io::savePCDFileASCII("/home/zhachanghai/test_grap/icp_guess.pcd", *sac_result);
+        pcl::io::savePCDFileASCII("/home/zhachanghai/bottle/icp_guess.pcd", *sac_result);
 
 
         pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
@@ -360,6 +413,11 @@ int main(int argc, char **argv) {
 
         pcl::transformPointCloud(*model,*final_cloud_, rototranslation);
 
+        pcl::PointCloud<pcl::PointXYZ>::Ptr final_scene_(new pcl::PointCloud<pcl::PointXYZ>);
+
+        pcl::transformPointCloud(*process_scene,*final_scene_, rototranslation.inverse());
+
+        pcl::io::savePCDFileASCII("/home/zhachanghai/bottle/result/" + to_string(count) + "_result_scene.pcd", *final_scene_);
 
 //        output << rotation (0,0) << " " << rotation (0,1) << " " << rotation (0,2) << endl;
 //        output << rotation (1,0) << " " << rotation (1,1) << " " << rotation (1,2) << endl;
@@ -380,10 +438,10 @@ int main(int argc, char **argv) {
 //
 //        addLine(infile_pic, count, rototranslation);
 
-        pcl::io::savePCDFileASCII("/home/zhachanghai/test_grap/result/" + to_string(count) + "_result.pcd", *final_cloud_);
+        pcl::io::savePCDFileASCII("/home/zhachanghai/bottle/result/" + to_string(count) + "_result.pcd", *final_cloud_);
     }
 
-    output.close();
+//    output.close();
 
     return 0;
 

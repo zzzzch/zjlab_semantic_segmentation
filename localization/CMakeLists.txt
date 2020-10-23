@@ -5,7 +5,6 @@ link_directories(
         ${CMAKE_SOURCE_DIR}/base/include
 )
 
-
 add_executable(localization
         rgb_localization.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}
@@ -20,8 +19,8 @@ target_include_directories(localization
         ${EIGEN_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
         ${OPENCV_INCLUDE_DIRS}
-        ${OPENGL_INCLUDE_DIR}
-        ${OpenMesh_INCLUDE_DIRS}
+#        ${OPENGL_INCLUDE_DIR}
+#        ${OpenMesh_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -34,8 +33,8 @@ target_link_libraries(localization
         ${PCL_LIBRARIES}
         ${Eigen_LIBRARIES}
         ${OpenCV_LIBS}
-        ${OPENGL_LIBRARIES}
-        ${OpenMesh_LIBS}
+#        ${OPENGL_LIBRARIES}
+#        ${OpenMesh_LIBS}
         ${GLOG_LIBRARY}
         ${gflags_LIBRARIES}
         )
@@ -55,7 +54,7 @@ target_include_directories(vote_hough
         ${Boost_INCLUDE_DIRS}
         ${OPENCV_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-        ${OpenMesh_INCLUDE_DIRS}
+#        ${OpenMesh_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -68,7 +67,7 @@ target_link_libraries(vote_hough
         ${Eigen_LIBRARIES}
         ${OpenCV_LIBS}
         ${OPENGL_LIBRARIES}
-        ${OpenMesh_LIBS}
+#        ${OpenMesh_LIBS}
         ${GLOG_LIBRARY}
         ${gflags_LIBRARIES}
         )
@@ -91,7 +90,7 @@ target_include_directories(gl_show
         ${OPENCV_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${GLUT_INCLUDE_DIR}
-        ${OpenMesh_INCLUDE_DIRS}
+#        ${OpenMesh_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -105,7 +104,42 @@ target_link_libraries(gl_show
         ${OpenCV_LIBS}
         ${GLUT_LIBRARIES}
         ${OPENGL_LIBRARIES}
-        ${OpenMesh_LIBS}
+#        ${OpenMesh_LIBS}
+        ${GLOG_LIBRARY}
+        ${gflags_LIBRARIES}
+        )
+
+add_executable(grap_bottle
+        grap_bottle.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}/base/src
+        ${CMAKE_SOURCE_DIR}/base/include
+        )
+
+target_include_directories(grap_bottle
+        PUBLIC
+        ${CMAKE_SOURCE_DIR}/base/include
+        ${PCL_INCLUDE_DIRS}
+        ${EIGEN_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIRS}
+        ${OPENCV_INCLUDE_DIRS}
+        ${OPENGL_INCLUDE_DIR}
+        ${realsense2_INCLUDE_DIR}
+#        ${OpenMesh_INCLUDE_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${GLOG_INCLUDE_DIR}
+        ${GFLAGS_INCLUDE_DIR}
+        )
+
+target_link_libraries(grap_bottle
+        PUBLIC
+        base
+        ${PCL_LIBRARIES}
+        ${Eigen_LIBRARIES}
+        ${OpenCV_LIBS}
+        ${OPENGL_LIBRARIES}
+        ${realsense2_LIBRARY}
+#        ${OpenMesh_LIBS}
         ${GLOG_LIBRARY}
         ${gflags_LIBRARIES}
         )

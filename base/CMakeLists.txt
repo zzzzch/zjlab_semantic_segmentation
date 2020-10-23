@@ -12,7 +12,7 @@ target_include_directories(${PROJECT_NAME}
         ${Boost_INCLUDE_DIRS}
         ${OPENCV_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-        ${OpenMesh_INCLUDE_DIRS}
+#        ${OpenMesh_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -24,8 +24,9 @@ target_link_libraries(${PROJECT_NAME}
         ${Eigen_LIBRARIES}
         ${OpenCV_LIBS}
         ${OPENGL_LIBRARIES}
-        ${OpenMesh_LIBS}
+#        ${OpenMesh_LIBS}
         ${GLOG_LIBRARY}
         ${gflags_LIBRARIES}
+        PRIVATE nlohmann_json::nlohmann_json
         )
 

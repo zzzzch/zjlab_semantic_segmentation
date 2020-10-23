@@ -21,12 +21,12 @@
 #include "pcl_tools.h"
 
 DEFINE_string(scene_path,
-              "/home/zhachanghai/guochen_test/pcl_point/142 _test.pcd", "scene pcd file");
+              "/home/zhachanghai/cat/read_test.pcd", "scene pcd file");
 
 DEFINE_string(target_path,
-              "/home/zhachanghai/guochen_test/model.ply", "target ply file");
+              "/home/zhachanghai/cat/cat_new.ply", "target ply file");
 
-DEFINE_string(output_path, "/home/zhachanghai/guochen_test/", "output file path");
+DEFINE_string(output_path, "/home/zhachanghai/cat/", "output file path");
 
 using namespace zjlab;
 using namespace pose;
@@ -49,39 +49,6 @@ float descr_rad_ (0.04f);
 float cg_size_ (0.03f);
 float cg_thresh_ (1.5f);
 
-
-double
-computeCloudResolution (const pcl::PointCloud<PointType>::ConstPtr &cloud)//计算点云分辨率
-{
-    double res = 0.0;
-    int n_points = 0;
-    int nres;
-    std::vector<int> indices (2);
-    std::vector<float> sqr_distances (2);
-    pcl::search::KdTree<PointType> tree;
-    tree.setInputCloud (cloud);   //设置输入点云
-
-    for (size_t i = 0; i < cloud->size (); ++i)
-    {
-        if (! pcl_isfinite ((*cloud)[i].x))
-        {
-            continue;
-        }
-        //Considering the second neighbor since the first is the point itself.
-        //运算第二个临近点，因为第一个点是它本身
-        nres = tree.nearestKSearch (i, 2, indices, sqr_distances);//return :number of neighbors found
-        if (nres == 2)
-        {
-            res += sqrt (sqr_distances[1]);
-            ++n_points;
-        }
-    }
-    if (n_points != 0)
-    {
-        res /= n_points;
-    }
-    return res;
-}
 
 int main (int argc, char *argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
@@ -134,34 +101,16 @@ int main (int argc, char *argv[]) {
 
         for (int i = 0; i < point_num; i++) {
             pcl::PointXYZ pt;
-            pt.x = positions[i][0]-x;
-            pt.y = positions[i][1]-y;
-            pt.z = positions[i][2]-z;
+            pt.x = (positions[i][0]-x)/1000;
+            pt.y = (positions[i][1]-y)/1000;
+            pt.z = (positions[i][2]-z)/1000;
             model->push_back(pt);
         }
     }
 
+    pcl::io::savePCDFileASCII("/home/zhachanghai/cat/read_model.pcd", *model);
 
-    // 设置分辨率
-    if (use_cloud_resolution_)
-    {
-        float resolution = static_cast<float> (computeCloudResolution (model));
-        if (resolution != 0.0f)
-        {
-            model_ss_   *= resolution;
-            scene_ss_   *= resolution;
-            rf_rad_     *= resolution;
-            descr_rad_  *= resolution;
-            cg_size_    *= resolution;
-        }
-
-        std::cout << "Model resolution:       " << resolution << std::endl;
-        std::cout << "Model sampling size:    " << model_ss_ << std::endl;
-        std::cout << "Scene sampling size:    " << scene_ss_ << std::endl;
-        std::cout << "LRF support radius:     " << rf_rad_ << std::endl;
-        std::cout << "SHOT descriptor radius: " << descr_rad_ << std::endl;
-        std::cout << "Clustering bin size:    " << cg_size_ << std::endl << std::endl;
-    }
+    model.swap(scene);
 
     LOG(INFO) << "Downsampling !!";
     pcl::VoxelGrid<pcl::PointXYZ> grid;
@@ -175,27 +124,6 @@ int main (int argc, char *argv[]) {
 
     LOG(INFO) << "After downsample, scene point number is " << scene->size();
     LOG(INFO) << "After downsample, target point number is " << model->size();
-
-    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
-    tree->setInputCloud (scene);
-
-    std::vector<pcl::PointIndices> cluster_indices;
-
-    pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-    ec.setClusterTolerance (0.02);
-    ec.setMinClusterSize (100);
-    ec.setMaxClusterSize (100000);
-    ec.setSearchMethod (tree);
-    ec.setInputCloud (scene);
-    ec.extract (cluster_indices);
-
-    pcl::PointCloud<pcl::PointXYZ>::Ptr process_scene(new pcl::PointCloud<pcl::PointXYZ>);
-
-    process_scene = getChildCloudByIndicesFromOriginal<pcl::PointXYZ>(scene,cluster_indices[0]);
-
-    LOG(INFO) << "After euclidean cluster, process scene point number is " << process_scene->size();
-
-    scene.swap(process_scene);
 
 
     //计算法线 normalestimationomp估计局部表面特性在每个三个特点，分别表面的法向量和曲率，平行，使用OpenMP标准。//初始化调度程序并设置要使用的线程数（默认为0）。
