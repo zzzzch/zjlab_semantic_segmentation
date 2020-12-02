@@ -1,14 +1,27 @@
 cmake_minimum_required(VERSION 3.9)
 project(untitled1)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 
+set(USE_ICP_GPU "OFF")
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    if(${USE_ICP_GPU} STREQUAL "ON")
+        find_package(PCL 1.10 QUIET REQUIRED
+                COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation visualization registration gpu_features)
+    else()
+        find_package(PCL 1.10 QUIET REQUIRED
+                COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation visualization registration)
+    endif()
+else ()
+    find_package(PCL 1.10 QUIET REQUIRED
+            COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation registration)
+endif ()
 
-find_package(PCL 1.9 REQUIRED)
-find_package(Boost REQUIRED QUIET)
+find_package(Boost 1.65 REQUIRED QUIET)
 find_package(OpenCV REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(realsense2 2.39 REQUIRED)
+find_package(Python3 3.6 COMPONENTS Interpreter Development REQUIRED)
 
 ## glog
 find_package(Glog REQUIRED)
@@ -24,6 +37,10 @@ if(NOT GFLAGS_INCLUDE_DIR)
     message("Gflags path is wrong , can't find it" )
 endif(NOT GFLAGS_INCLUDE_DIR)
 
+if (POLICY CMP0072)
+    set(OpenGL_GL_PREFERENCE GLVND)
+endif()
+
 # opengl
 find_package(OpenGL REQUIRED)
 if(NOT (OPENGL_INCLUDE_DIR OR OPENGL_LIBRARIES))
@@ -31,6 +48,7 @@ if(NOT (OPENGL_INCLUDE_DIR OR OPENGL_LIBRARIES))
     message("opengl include is " ${OPENGL_INCLUDE_DIR})
     message("opengl lab is " ${OPENGL_LIBRARIES})
 endif(NOT (OPENGL_INCLUDE_DIR OR OPENGL_LIBRARIES))
+
 
 # glut
 find_package(GLUT REQUIRED)
@@ -43,15 +61,6 @@ endif(NOT (GLUT_INCLUDE_DIR OR GLUT_LIBRARIES))
 # nolman json
 find_package(nlohmann_json REQUIRED)
 
-## openmesh
-#find_package(OpenMesh REQUIRED)
-#if(NOT (OpenMesh_INCLUDE_DIRS AND OpenMesh_LIBS))
-#    message("openmash path is wrong , can't find it" )
-#    message("mesh include is " ${OpenMesh_INCLUDE_DIRS})
-#    message("mesh libs is " ${OpenMesh_LIBS})
-#
-#endif(NOT (OpenMesh_INCLUDE_DIRS AND OpenMesh_LIBS))
-
 include_directories(${PCL_INCLUDE_DIRS}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -63,5 +72,8 @@ add_subdirectory(imgui)
 add_subdirectory(FindCloud)
 add_subdirectory(localization)
 add_subdirectory(realsense_grap)
+add_subdirectory(test_gpu)
+add_subdirectory(cuda)
+
 #add_subdirectory(camera)
 

@@ -103,9 +103,13 @@ void testGrapPose(pcl::PointCloud<pcl::PointXYZ>::Ptr& origin_input){
     {
         pcl::PointCloud<pcl::PointXYZ>::Ptr scene_rotation(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::PointCloud<pcl::PointXYZ>::Ptr scene_rotation2(new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr scene_rotation3(
+            new pcl::PointCloud<pcl::PointXYZ>);
 
         pcl::PointCloud<pcl::PointXYZ>::Ptr origin_rotation(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::PointCloud<pcl::PointXYZ>::Ptr origin_rotation2(new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr origin_rotation3(
+            new pcl::PointCloud<pcl::PointXYZ>);
 
         //yaw(z) pitch(y) roll(x)
         Eigen::Matrix3d first_step_rotation = yprDegrees2RotationZYX(0,0,-15);
@@ -121,10 +125,21 @@ void testGrapPose(pcl::PointCloud<pcl::PointXYZ>::Ptr& origin_input){
         pcl::transformPointCloud (*scene_rotation,*scene_rotation2,R2T(second_step_rotation));
         pcl::transformPointCloud (*origin_rotation,*origin_rotation2,R2T(second_step_rotation));
 
-//        pcl::io::savePCDFileASCII("/home/zhachanghai/bottle/scene_rotation2.pcd", *scene_rotation2);
-        pcl::io::savePCDFileASCII("/home/zhachanghai/bottle/origin_rotation.pcd", *origin_rotation2);
-        origin_input.swap(origin_rotation2);
-        scene.swap(scene_rotation2);
+        Eigen::Matrix4d thrid_step_trans;
+        thrid_step_trans << 1, 0, 0, 0.05, 0, 1, 0, 0, 0, 0, 1, 1.8945, 0, 0, 0,
+            1;
+
+        pcl::transformPointCloud(*scene_rotation2, *scene_rotation3,
+                                 thrid_step_trans);
+        pcl::transformPointCloud(*origin_rotation2, *origin_rotation3,
+                                 thrid_step_trans);
+
+        //        pcl::io::savePCDFileASCII("/home/zhachanghai/bottle/scene_rotation2.pcd",
+        //        *scene_rotation3);
+        pcl::io::savePCDFileASCII(
+            "/home/zhachanghai/bottle/origin_rotation.pcd", *origin_rotation3);
+        origin_input.swap(origin_rotation3);
+        scene.swap(scene_rotation3);
     }
 
     //估计点的法线，50为一组/
@@ -201,13 +216,18 @@ void testGrapPose(pcl::PointCloud<pcl::PointXYZ>::Ptr& origin_input){
     std::vector<pcl::PointIndices> cluster_indices;
     pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
     ec.setClusterTolerance (0.02);
-    ec.setMinClusterSize (100);
+    ec.setMinClusterSize(10);
     ec.setMaxClusterSize (100000);
     ec.setSearchMethod (tree);
     ec.setInputCloud (cloud_filtered_height);
     ec.extract (cluster_indices);
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr process_scene(new pcl::PointCloud<pcl::PointXYZ>);
+
+    if (cluster_indices.size() == 0) {
+      LOG(ERROR) << "can't get child cloud , maybe something wrong !";
+      return;
+    }
 
     process_scene = getChildCloudByIndicesFromOriginal<pcl::PointXYZ>(cloud_filtered_height,cluster_indices[0]);
 
@@ -233,8 +253,8 @@ void testGrapPose(pcl::PointCloud<pcl::PointXYZ>::Ptr& origin_input){
     seg.setMethodType(pcl::SAC_RANSAC);      				//设置采用RANSAC作为算法的参数估计方法
     seg.setNormalDistanceWeight(0.2);         						//设置表面法线权重系数
     seg.setMaxIterations(10000);              							//设置迭代的最大次数10000
-    seg.setDistanceThreshold(0.1);           							//设置内点到模型的距离允许最大值
-    seg.setRadiusLimits(0, 0.3);              								//设置估计出的圆柱模型的半径范围
+    seg.setDistanceThreshold(0.005);  //设置内点到模型的距离允许最大值
+    seg.setRadiusLimits(0, 0.5);  //设置估计出的圆柱模型的半径范围
     seg.setInputCloud(cloud_projected);
     seg.setInputNormals(cloud_src_normals);
 

@@ -20,7 +20,6 @@ target_include_directories(localization
         ${Boost_INCLUDE_DIRS}
         ${OPENCV_INCLUDE_DIRS}
 #        ${OPENGL_INCLUDE_DIR}
-#        ${OpenMesh_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -34,7 +33,6 @@ target_link_libraries(localization
         ${Eigen_LIBRARIES}
         ${OpenCV_LIBS}
 #        ${OPENGL_LIBRARIES}
-#        ${OpenMesh_LIBS}
         ${GLOG_LIBRARY}
         ${gflags_LIBRARIES}
         )
@@ -54,7 +52,6 @@ target_include_directories(vote_hough
         ${Boost_INCLUDE_DIRS}
         ${OPENCV_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-#        ${OpenMesh_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -67,7 +64,6 @@ target_link_libraries(vote_hough
         ${Eigen_LIBRARIES}
         ${OpenCV_LIBS}
         ${OPENGL_LIBRARIES}
-#        ${OpenMesh_LIBS}
         ${GLOG_LIBRARY}
         ${gflags_LIBRARIES}
         )
@@ -90,7 +86,6 @@ target_include_directories(gl_show
         ${OPENCV_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${GLUT_INCLUDE_DIR}
-#        ${OpenMesh_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -104,7 +99,6 @@ target_link_libraries(gl_show
         ${OpenCV_LIBS}
         ${GLUT_LIBRARIES}
         ${OPENGL_LIBRARIES}
-#        ${OpenMesh_LIBS}
         ${GLOG_LIBRARY}
         ${gflags_LIBRARIES}
         )
@@ -125,7 +119,6 @@ target_include_directories(grap_bottle
         ${OPENCV_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${realsense2_INCLUDE_DIR}
-#        ${OpenMesh_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLOG_INCLUDE_DIR}
         ${GFLAGS_INCLUDE_DIR}
@@ -139,7 +132,6 @@ target_link_libraries(grap_bottle
         ${OpenCV_LIBS}
         ${OPENGL_LIBRARIES}
         ${realsense2_LIBRARY}
-#        ${OpenMesh_LIBS}
         ${GLOG_LIBRARY}
         ${gflags_LIBRARIES}
         )
