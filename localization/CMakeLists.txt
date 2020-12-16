@@ -80,6 +80,7 @@ add_executable(gl_show
 target_include_directories(gl_show
         PUBLIC
         ${CMAKE_SOURCE_DIR}/base/include
+        ${Python3_INCLUDE_DIRS}
         ${PCL_INCLUDE_DIRS}
         ${EIGEN_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
@@ -95,6 +96,7 @@ target_link_libraries(gl_show
         PUBLIC
         base
         ${PCL_LIBRARIES}
+        ${Python3_LIBRARIES}
         ${Eigen_LIBRARIES}
         ${OpenCV_LIBS}
         ${GLUT_LIBRARIES}

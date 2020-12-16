@@ -3,25 +3,26 @@ project(untitled1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(USE_ICP_GPU "OFF")
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    if(${USE_ICP_GPU} STREQUAL "ON")
-        find_package(PCL 1.10 QUIET REQUIRED
-                COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation visualization registration gpu_features)
-    else()
-        find_package(PCL 1.10 QUIET REQUIRED
-                COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation visualization registration)
-    endif()
-else ()
-    find_package(PCL 1.10 QUIET REQUIRED
-            COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation registration)
-endif ()
+#set(USE_ICP_GPU "ON")
+#if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+#    if(${USE_ICP_GPU} STREQUAL "ON")
+#        find_package(PCL 1.9 QUIET REQUIRED
+#                COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation visualization registration gpu_features)
+#    else()
+#        find_package(PCL 1.9 QUIET REQUIRED
+#                COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation visualization registration)
+#    endif()
+#else ()
+#    find_package(PCL 1.9 QUIET REQUIRED
+#            COMPONENTS common kdtree octree search surface io ml sample_consensus filters geometry 2d features segmentation registration)
+#endif ()
 
 find_package(Boost 1.65 REQUIRED QUIET)
+find_package(PCL 1.9 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(realsense2 2.39 REQUIRED)
-find_package(Python3 3.6 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 ## glog
 find_package(Glog REQUIRED)
